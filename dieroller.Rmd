@@ -1,0 +1,88 @@
+---
+title: "DieRoller"
+author: "Phoebe Abramowitz"
+date: "4/25/2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+1)Die
+```{r}
+#input: sides vector
+#output: boolean
+check_sides <- function(sides){
+  if(length(sides)==6){
+     stop("\nargument 'sides' must be a vector of length 6")
+  }
+  else{
+    TRUE
+  }
+}
+
+check_prob <- function(prob){
+  if(length(prob)!=6){
+    stop("\nargument 'sides' must be a vector of length 6")
+  }
+  if(sum(prob)!=1){
+    stop("elements in \nargument 'prob' must add up to 1")
+  }
+  else{
+    TRUE
+  }
+}
+
+die <- function(sides=seq(1,6),prob=rep(1/6,6)){
+  check_sides(sides)
+  check_prob(prob)
+  list(sides,prob)
+  }
+
+fair_die <- die()
+
+#' @export
+print.die <- function(x, ...) {
+  cat('object "die"\n\n')
+  cat(x[1],x[2])
+}
+
+```
+2)Roll
+A list containing vectors "roll", "sides", "prob"
+```{r}
+#purpose: repeat each value in proportion to its probability in prob
+
+# private function
+#' @title die roll function 
+#' @description simulates rolling a die a given number of times
+#' @param die object (a list of vectors)
+#' @param times number of rolls
+#' @return vector of rolls
+roll <- function(die, times = 1) {
+  sample(die[[1]], size = times, replace = TRUE, prob = die[[2]])
+}
+#roll a fair dice 10 times
+roll(fair_die, times = 10)
+
+#' @title Make Roll Object
+#' @description Constructor function for object "roll"
+#' @param die object of class die
+#' @param rolls object of class rolls
+#' @keywords internal
+make_roll <- function(die, rolls) {
+  res <- list(
+    rolls = shakes,
+    die = die,
+    total = length(rolls),
+    #how do I modify this for sides
+    s1 = sum(flips == die$sides[1]),
+    s2 = sum(flips == die$sides[2]),
+    s3 = sum(flips == die$sides[3]))
+  class(res) <- "toss"
+  res
+}
+
+#do a print method
+```
+

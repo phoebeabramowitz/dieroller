@@ -8,7 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-1)Die
+
 ```{r}
 #input: sides vector
 #output: boolean
@@ -158,7 +158,7 @@ plot.roll <- function(x) {
   title(sprintf("Relative Frequencies in a series of %s coin tosses", x$total))
 }
 ```
-5) Additional Methods
+
 ```{r}
 #' @export
 "[<-.roll" <- function(x, i, value) {

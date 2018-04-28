@@ -45,6 +45,7 @@ fair_die <- die()
 print.die <- function(x, ...) {
   cat('object "die"\n\n')
   cat(x[1],x[2])
+  invisible(x)
 }
 
 ```
@@ -71,33 +72,79 @@ check_times <- function(times){
 #' @param die object (a list of vectors)
 #' @param times number of rolls
 #' @return vector of rolls
+
 roll <- function(die, times = 1) {
   check_times
   sample(die[[1]], size = times, replace = TRUE, prob = die[[2]])
 }
-#roll a fair dice 10 times
-roll(fair_die, times = 10)
 
 #' @title Make Roll Object
 #' @description Constructor function for object "roll"
 #' @param die object of class die
-#' @param rolls object of class rolls
+#' @param flips object of class flip
 #' @keywords internal
-make_roll <- function(die, rolls) {
+make_roll <- function(die,flips){
   res <- list(
-    rolls = shakes,
-    die = die,
-    total = length(rolls),
-    #how do I modify this for sides
-    s1 = sum(flips == die$sides[1]),
-    s2 = sum(flips == die$sides[2]),
-    s3 = sum(flips == die$sides[3]))
-  class(res) <- "toss"
+    rolls = flips,
+    sides = die[[1]],
+    prob  = die[[2]],
+    total = length(flips)
+  )
+  class(res) <- "roll"
   res
 }
 
-#do a print method
+#' @export
+print.roll <- function(x, ...) {
+  cat('object "roll"\n\n')
+  cat(x$rolls)
+  invisible(x)
+}
+
+print()
 ```
 3) Roll Summary
-A list containing vectors "roll", "sides", "prob"
+data frame called freqs with 3 columns: sides, count, prop
+```{r}
+#' @export
+summary.roll <- function(x, ...) {
+  proportions <- c(
+    sum(x$rolls == x$sides[1]) / x$total,
+    sum(x$rolls == x$sides[2]) / x$total,
+    sum(x$rolls == x$sides[3]) / x$total,
+    sum(x$rolls == x$sides[4]) / x$total,
+    sum(x$rolls == x$sides[5]) / x$total,
+    sum(x$rolls == x$sides[6]) / x$total
+  )
+  freqs <- data.frame(
+    side = x$sides,
+    count = c(sum(x$rolls == x$sides[1]),
+              sum(x$rolls == x$sides[2]),
+              sum(x$rolls == x$sides[3]),
+              sum(x$rolls == x$sides[4]),
+              sum(x$rolls == x$sides[5]),
+              sum(x$rolls == x$sides[6])
+              ),
+    prop = proportions)
+  obj <- list(freqs = freqs)
+  class(obj) <- "summary.roll"
+  obj
+}
+
+#' @export
+print.summary.roll <- function(x, ...) {
+  cat('summary "roll"\n\n')
+  print(x$freqs)
+  invisible(x)
+}
+
+fair_50rolls <- roll(fair_die,times=50)
+class(fair_50rolls)
+f50r <- make_roll(fair_die,fair_50rolls)
+class(f50r)
+fair50_sum <- summary(f50r)
+class(fair50_sum)
+print(fair50_sum)
+```
+
 

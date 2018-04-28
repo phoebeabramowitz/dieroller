@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #input: sides vector
 #output: boolean
 check_sides <- function(sides){
-  if(length(sides)==6){
+  if(length(sides)!=6){
      stop("\nargument 'sides' must be a vector of length 6")
   }
   else{
@@ -49,9 +49,21 @@ print.die <- function(x, ...) {
 
 ```
 2)Roll
-A list containing vectors "roll", "sides", "prob"
 ```{r}
 #purpose: repeat each value in proportion to its probability in prob
+#' @title check times functions
+#' @description checks validity of times argument
+#' @param times number of rolls
+#' @return TRUE or Stop
+#what to do if it's a numeric but actually an integer
+check_times <- function(times){
+  if (times <= 0 | !is.numeric(times)) {
+    stop("\nargument 'times' must be a positive integer")
+  } 
+  else {
+    TRUE
+  }
+}
 
 # private function
 #' @title die roll function 
@@ -60,6 +72,7 @@ A list containing vectors "roll", "sides", "prob"
 #' @param times number of rolls
 #' @return vector of rolls
 roll <- function(die, times = 1) {
+  check_times
   sample(die[[1]], size = times, replace = TRUE, prob = die[[2]])
 }
 #roll a fair dice 10 times
@@ -85,4 +98,6 @@ make_roll <- function(die, rolls) {
 
 #do a print method
 ```
+3) Roll Summary
+A list containing vectors "roll", "sides", "prob"
 

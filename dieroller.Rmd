@@ -28,6 +28,9 @@ check_prob <- function(prob){
   if(sum(prob)!=1){
     stop("elements in \nargument 'prob' must add up to 1")
   }
+  if (any(prob < 0) | any(prob > 1)) {
+    stop("\n'prob' values must be between 0 and 1")
+  }
   else{
     TRUE
   }
@@ -38,8 +41,6 @@ die <- function(sides=seq(1,6),prob=rep(1/6,6)){
   check_prob(prob)
   list(sides,prob)
   }
-
-fair_die <- die()
 
 #' @export
 print.die <- function(x, ...) {
@@ -66,17 +67,6 @@ check_times <- function(times){
   }
 }
 
-# private function
-#' @title die roll function 
-#' @description simulates rolling a die a given number of times
-#' @param die object (a list of vectors)
-#' @param times number of rolls
-#' @return vector of rolls
-
-roll <- function(die, times = 1) {
-  check_times
-  sample(die[[1]], size = times, replace = TRUE, prob = die[[2]])
-}
 
 #' @title Make Roll Object
 #' @description Constructor function for object "roll"
@@ -94,6 +84,17 @@ make_roll <- function(die,flips){
   res
 }
 
+#' @title die roll function 
+#' @description simulates rolling a die a given number of times
+#' @param die object (a list of vectors)
+#' @param times number of rolls
+#' @return list of rolls,sides,prob,total
+roll.die <- function(die, times = 1) {
+  check_times
+  flips <- sample(die[[1]], size = times, replace = TRUE, prob = die[[2]])
+  make_roll(die,flips)
+}
+
 #' @export
 print.roll <- function(x, ...) {
   cat('object "roll"\n\n')
@@ -101,7 +102,6 @@ print.roll <- function(x, ...) {
   invisible(x)
 }
 
-print()
 ```
 3) Roll Summary
 data frame called freqs with 3 columns: sides, count, prop
@@ -138,13 +138,39 @@ print.summary.roll <- function(x, ...) {
   invisible(x)
 }
 
+```
+4) Plot Method
+
+```{r}
+props <- function(x){
+  c(sum(x$rolls == x$sides[1]) / x$total,
+    sum(x$rolls == x$sides[2]) / x$total,
+    sum(x$rolls == x$sides[3]) / x$total,
+    sum(x$rolls == x$sides[4]) / x$total,
+    sum(x$rolls == x$sides[5]) / x$total,
+    sum(x$rolls == x$sides[6]) / x$total)
+}
+
+plot.roll <- function(x) {
+  barplot(props(x), names.arg = x$sides,
+       xlab = "sides of die", 
+       ylab = sprintf("relative frequency"))
+  title(sprintf("Relative Frequencies in a series of %s coin tosses", x$total))
+}
+```
+
+Tests
+```{r}
+fair_die <- die()
 fair_50rolls <- roll(fair_die,times=50)
 class(fair_50rolls)
-f50r <- make_roll(fair_die,fair_50rolls)
-class(f50r)
-fair50_sum <- summary(f50r)
+fair_50rolls$rolls
+fair50_sum <- summary(fair_50rolls)
+fair_50rolls$total
 class(fair50_sum)
-print(fair50_sum)
+props(fair_50rolls)
+plot(fair_50rolls)
 ```
+
 
 

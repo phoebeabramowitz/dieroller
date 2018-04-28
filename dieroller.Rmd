@@ -158,6 +158,39 @@ plot.roll <- function(x) {
   title(sprintf("Relative Frequencies in a series of %s coin tosses", x$total))
 }
 ```
+5) Additional Methods
+```{r}
+#' @export
+"[<-.roll" <- function(x, i, value) {
+  if (value != x$sides[1] & value != x$sides[2] & value != x$sides[3] &
+      value != x$sides[4] & value != x$sides[5] & value != x$sides[6]) {
+    stop(sprintf('\nreplacing value must be %s, %s, %s, %s,%s or %s', x$sides[1], 
+                 x$sides[2], x$sides[3], x$sides[4], x$sides[5], x$sides[6]))
+  }
+  if (i > x$total) {
+    stop("\nindex out of bounds")
+  }
+  x$rolls[i] <- value
+  make_roll(x$die, x$rolls)
+}
+
+
+#' @export
+"[.roll" <- function(x, i) {
+  x$rolls[i]
+}
+
+
+#' @export
+"+.roll" <- function(obj, incr) {
+  if (length(incr) != 1 | incr <= 0) {
+    stop("\ninvalid increament")
+  }
+  more_flips <- sample(obj$sides, size = incr, replace = TRUE, prob = x$prob)
+  make_roll(obj$die, c(obj$rolls, more_flips))
+}
+```
+
 
 Tests
 ```{r}

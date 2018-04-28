@@ -1,0 +1,16 @@
+This package is to simulate rolling dice!Dice can have various probabilities and sides.
+
+One main way to use the functionality of this package is to create objects of the class "die", which can be rolled. 
+
+example using the default arguments of sides 1 through 6 and equal probabilities:
+fair_die <- die()
+
+Then, you can roll any object of class "die", creating an object of class "roll":
+fair_50rolls <- roll(fair_die,times=50)
+
+You can summarize objects of class "die" or "roll":
+fair50_sum <- summary(fair_50rolls)
+
+Finally, you can visualize many rolls with the plot functionality, giving you a marplot of frequencies:
+
+plot(fair_50rolls)
